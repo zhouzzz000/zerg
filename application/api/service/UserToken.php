@@ -28,7 +28,7 @@ class UserToken extends Token
         $this->wxAppID = config('wx.app_id');
         $this->wxAppSecret = config('wx.app_secret');
         $this->wxLoginUrl = sprintf(config('wx.login_url'),
-            $this->wxAppID,$this->wxAppSecret,$this->code);
+        $this->wxAppID,$this->wxAppSecret,$this->code);
     }
 
     public function get()
@@ -73,21 +73,7 @@ class UserToken extends Token
         $token = $this->saveToCache($cachedValue);
         return $token;
     }
-    private function saveToCache($cachedValue)
-    {
-        $key = self::generateToken();
-        $value = json_encode($cachedValue);
-        $expire_in = config('setting.token_expire_in');
-        $request = Cache::set($key,$value,$expire_in);
-        if(!$request)
-        {
-            throw new TokenException([
-                'msg' => '服务器缓存异常',
-                'errorCode' => 10005
-            ]);
-        }
-        return $key;
-    }
+
     private function prepareCachedValue($wxResult,$uid)
     {
         $cachedValue['wxResult'] = $wxResult;

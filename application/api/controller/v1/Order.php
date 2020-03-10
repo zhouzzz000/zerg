@@ -51,6 +51,23 @@ class Order extends BaseController
         ];
     }
 
+    public function getSummary($page = 1, $size = 15)
+    {
+        (new PagingParameter())->goCheck();
+        $pagingOrders = \app\api\model\Order::getSummary($page,$size);
+        if ($pagingOrders->isEmpty()){
+            return [
+                'data' => [],
+                'current_page' => $pagingOrders->getCurrentPage()
+            ];
+        }
+        $data = $pagingOrders->hidden(['snap_items','snap_address','prepay_id'])->toArray();
+        return [
+            'data' => $data,
+            'current_page' => $pagingOrders->getCurrentPage()
+        ];
+    }
+
     public function getDetail($id)
     {
         (new IDMustBePostiveInt())->goCheck();

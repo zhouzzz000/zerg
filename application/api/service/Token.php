@@ -28,6 +28,7 @@ class Token
         $salt = config('secure.token_salt');
         return md5($randChars.$timeStamp.$salt);
     }
+
     public static function getCurrentTokenVar($key)
     {
         $token = Request::instance()->header('token');
@@ -112,5 +113,30 @@ class Token
         else{
             return false;
         }
+    }
+
+    public static function verifyToken($token){
+        $exist = Cache::get($token);
+        if ($exist){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function saveToCache($cachedValue)
+    {
+        $key = self::generateToken();
+        $value = json_encode($cachedValue);
+        $expire_in = config('setting.token_expire_in');
+        $request = Cache::set($key,$value,$expire_in);
+        if(!$request)
+        {
+            throw new TokenException([
+                'msg' => '服务器缓存异常',
+                'errorCode' => 10005
+            ]);
+        }
+        return $key;
     }
 }

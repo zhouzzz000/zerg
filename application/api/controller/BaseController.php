@@ -17,6 +17,7 @@ class BaseController extends Controller
     {
         Token::needPrimaryScope();
     }
+
     public static function checkExclusiveScope()
     {
         Token::needExclusiveTokenVar();
